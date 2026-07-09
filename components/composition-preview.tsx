@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useBooth } from "@/components/booth-provider";
-import { layoutFor } from "@/lib/frames";
+import { printableFrameForLayout } from "@/lib/frames";
 import { filterCss } from "@/lib/draft";
 import { useCatalog } from "@/components/catalog-provider";
 
@@ -11,8 +11,7 @@ export function CompositionPreview({ animate = false }: { animate?: boolean }) {
   const { frameById } = useCatalog();
   const containerRef = useRef<HTMLDivElement>(null);
   const baseFrame = frameById(draft.frameId);
-  const layout = layoutFor(draft.layoutId);
-  const frame = useMemo(() => ({ ...baseFrame, ...layout }), [baseFrame, layout]);
+  const frame = useMemo(() => printableFrameForLayout(baseFrame, draft.layoutId), [baseFrame, draft.layoutId]);
 
   useEffect(() => {
     if (!animate || !containerRef.current) return;

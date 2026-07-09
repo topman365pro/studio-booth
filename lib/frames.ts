@@ -68,3 +68,8 @@ export function layoutFor(id: LayoutId) {
 export function frameFor(id: string) {
   return curatedFrames.find((frame) => frame.id === id) ?? curatedFrames[0];
 }
+
+export function printableFrameForLayout(frame: FrameTemplate, layoutId: LayoutId) {
+  if (frame.source === "supabase") return frame;
+  return { ...frame, ...layoutFor(layoutId) };
+}

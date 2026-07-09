@@ -7,7 +7,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Copy, Download, LoaderCircle
 import { CompositionPreview } from "@/components/composition-preview";
 import { useBooth } from "@/components/booth-provider";
 import { useCatalog } from "@/components/catalog-provider";
-import { layoutFor, layouts } from "@/lib/frames";
+import { layouts, printableFrameForLayout } from "@/lib/frames";
 import { fallbackTextStickers } from "@/lib/stickers";
 import { assetExtension, validateImageAsset } from "@/lib/assets";
 import { canvasBlob, composeA4Sheet, createGif, createWebM, downloadBlob, printA4Canvas, renderDraftToCanvas } from "@/lib/render";
@@ -30,7 +30,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [animationSpeed, setAnimationSpeed] = useState(450);
-  const [printCopies, setPrintCopies] = useState(1);
+  const [printCopies, setPrintCopies] = useState(4);
   const stageIndex = order.indexOf(stage);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
     setBusy(format);
     setNotice("");
     const baseFrame = frameById(draft.frameId);
-    const frame = { ...baseFrame, ...layoutFor(draft.layoutId) };
+    const frame = printableFrameForLayout(baseFrame, draft.layoutId);
     const fabricCanvas = await renderDraftToCanvas(exportCanvas.current, draft, frame);
     const blob = await canvasBlob(exportCanvas.current, format === "png" ? "image/png" : "image/jpeg");
     fabricCanvas.dispose();
@@ -101,7 +101,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
   const createA4 = async () => {
     if (draft.layoutId !== "strip") throw new Error("A4 printing is available for vertical strips only.");
     if (!exportCanvas.current) throw new Error("Export canvas unavailable");
-    const frame = { ...frameById(draft.frameId), ...layoutFor("strip") };
+    const frame = printableFrameForLayout(frameById(draft.frameId), "strip");
     const fabricCanvas = await renderDraftToCanvas(exportCanvas.current, draft, frame);
     const sheet = composeA4Sheet(exportCanvas.current, printCopies);
     fabricCanvas.dispose();
@@ -213,6 +213,8 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
         return;
       }
       const blob = await prepareStill("png");
+      const canvas = exportCanvas.current;
+      if (!canvas) throw new Error("Export canvas unavailable");
       const sessionId = crypto.randomUUID();
       const path = `${user.id}/${sessionId}/final.png`;
       const { error: uploadError } = await supabase.storage.from("exports").upload(path, blob, { contentType: "image/png" });
@@ -225,14 +227,13 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
         export_metadata: { layout: draft.layoutId, filter: draft.filter.preset }
       });
       if (sessionError) throw sessionError;
-      const frame = { ...frameById(draft.frameId), ...layoutFor(draft.layoutId) };
       const { error: exportError } = await supabase.from("exports").insert({
         session_id: sessionId,
         owner_id: user.id,
         format: "png",
         storage_path: path,
-        width: frame.width,
-        height: frame.height,
+        width: canvas.width,
+        height: canvas.height,
         byte_size: blob.size
       });
       if (exportError) throw exportError;
