@@ -1,0 +1,80 @@
+# Studio Booth
+
+A production-ready, privacy-first browser photobooth built with Next.js, Fabric.js, Supabase, and browser-native media APIs.
+
+## Features
+
+- Camera selection, mirror, flash, ring light, timer, and 1–6 shot sessions
+- 24-hour IndexedDB draft recovery; raw captures never leave the browser
+- Routed layout, frame, filter, sticker, animation, and export workflow
+- PNG, JPEG, GIF, and WebM downloads generated in-browser
+- Supabase magic-link and Google authentication
+- Explicit opt-in saving of final exports only
+- Private gallery and custom frame builder
+- Admin-managed frame and image-sticker catalogs
+- Print-ready edge-aligned A4 strip sheets at 300 DPI
+- Responsive modern photo-lab interface
+
+## Local development
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+The complete guest workflow works without Supabase. Account, gallery, private-frame, and cloud-save features display a setup message until the two public Supabase variables are configured.
+
+## Supabase setup
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/001_initial.sql` and `supabase/migrations/002_catalog_admin.sql` in order through the SQL editor or Supabase CLI.
+3. Enable Email OTP and Google under Authentication → Providers.
+4. Add `http://localhost:3000/auth/callback` and your Vercel callback URL to the authentication redirect allow-list.
+5. For Google, add the callback URL shown by Supabase to the Google OAuth client.
+6. Copy the project URL and anon key into `.env.local`.
+
+The migration creates private `exports` and `private-frames` buckets, a public `curated-frames` bucket, database tables, indexes, and row-level security policies. Paths are namespaced with the authenticated user ID.
+
+### Promote the first administrator
+
+After the administrator has signed in once, find their UUID in Authentication → Users and run:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = '<USER_UUID>';
+```
+
+The protected `/admin` interface then provides frame and sticker uploads, publishing, ordering, replacement, metadata editing, and deletion. Catalog assets accept PNG and WebP files up to 10 MB. Signed-in members can upload private frames and private stickers without publishing them globally.
+
+### A4 print sheets
+
+Vertical strips can be exported as a portrait A4 PNG at exactly 2480 × 3508 pixels. One to four copies are rotated 90 degrees, scaled to the 2480-pixel paper edge, and stacked from the top with no margins or gaps. The browser print action uses an A4 portrait, zero-margin print stylesheet.
+
+## Vercel deployment
+
+1. Import the repository into Vercel; the framework is detected as Next.js.
+2. Set:
+   - `NEXT_PUBLIC_SITE_URL=https://your-domain.example`
+   - `NEXT_PUBLIC_SUPABASE_URL=...`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY=...`
+3. Add `https://your-domain.example/auth/callback` to Supabase redirect URLs.
+4. Deploy. Vercel provides HTTPS, which is required for camera access.
+
+No server-side image or video rendering is required. Camera captures and encoding happen in the browser; Vercel serves the app and Supabase stores only explicit final saves.
+
+## Privacy model
+
+- Raw captures are stored only in browser memory/IndexedDB.
+- Local drafts expire after 24 hours.
+- Nothing is uploaded for guest sessions.
+- Signed-in users must press **Save to my gallery**.
+- Supabase RLS and private storage policies scope saved exports to their owner.
+
+## Verification
+
+```bash
+npm test
+npm run build
+```
