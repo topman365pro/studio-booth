@@ -17,6 +17,8 @@ type Passkey = {
 export function AccountClient() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [passkeys, setPasskeys] = useState<Passkey[]>([]);
+  const [setupPasskey, setSetupPasskey] = useState(false);
+  const [continueTo, setContinueTo] = useState("/gallery");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -26,6 +28,13 @@ export function AccountClient() {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shouldSetupPasskey = params.get("setupPasskey") === "1";
+    const next = params.get("next");
+    setSetupPasskey(shouldSetupPasskey);
+    setContinueTo(next?.startsWith("/") && !next.startsWith("//") ? next : "/gallery");
+    if (shouldSetupPasskey) setMessage("Almost there — create your passkey to finish account setup.");
+
     const supabase = createClient();
     void supabase?.auth.getUser().then(({ data }) => {
       setUser(data.user);
@@ -33,14 +42,20 @@ export function AccountClient() {
     });
   }, []);
 
-  const registerPasskey = async () => {
+  const registerPasskey = async (continueAfterSetup = false) => {
     const supabase = createClient();
     if (!supabase) return;
     setBusy(true);
     setMessage("");
     const { data, error } = await supabase.auth.registerPasskey();
-    setMessage(error ? error.message : `${data?.friendly_name ?? "Passkey"} is ready to use.`);
-    if (!error) await loadPasskeys();
+    if (error) {
+      setMessage(error.message);
+    } else {
+      setMessage(`${data?.friendly_name ?? "Passkey"} is ready to use.`);
+      setSetupPasskey(false);
+      await loadPasskeys();
+      if (continueAfterSetup) window.setTimeout(() => window.location.assign(continueTo), 900);
+    }
     setBusy(false);
   };
 
@@ -67,13 +82,14 @@ export function AccountClient() {
           <section className="account-passkeys">
             <div className="passkey-heading"><Fingerprint size={30} /><div><p>Passkeys</p><h2>Sign in without Google or a password</h2></div></div>
             <div className="passkey-list">
+              {setupPasskey && <div className="passkey-setup-card"><strong>Finish your passkey signup</strong><small>Your email is confirmed. Create a passkey on this device to complete account setup.</small></div>}
               {passkeys.map(passkey => <div className="passkey-row" key={passkey.id}><div><strong>{passkey.friendly_name ?? "Passkey"}</strong><small>Added {new Date(passkey.created_at).toLocaleDateString()}</small></div><button aria-label="Remove passkey" onClick={() => deletePasskey(passkey.id)} disabled={busy}><Trash2 size={14} /></button></div>)}
               {!passkeys.length && <p>No passkeys registered yet.</p>}
             </div>
-            <button className="button button-solid" onClick={registerPasskey} disabled={busy}>{busy ? <LoaderCircle className="spin" /> : <Fingerprint size={14} />} Create passkey</button>
+            <button className="button button-solid" onClick={() => registerPasskey(setupPasskey)} disabled={busy}>{busy ? <LoaderCircle className="spin" /> : <Fingerprint size={14} />} {setupPasskey ? "Create passkey & continue" : "Create passkey"}</button>
             {message && <p className="auth-message">{message}</p>}
           </section></>
-          : <section><p>You are currently using the booth as a guest.</p><Link className="button button-solid" href="/login?next=/account">Sign in</Link></section>}
+          : <section><p>You are currently using the booth as a guest.</p><Link className="button button-solid" href="/login?next=/account">Sign in or create passkey</Link></section>}
       </main>
     </>
   );

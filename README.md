@@ -8,7 +8,7 @@ A production-ready, privacy-first browser photobooth built with Next.js, Fabric.
 - 24-hour IndexedDB draft recovery; raw captures never leave the browser
 - Routed layout, frame, filter, sticker, animation, and export workflow
 - PNG, JPEG, GIF, and WebM downloads generated in-browser
-- Supabase magic-link and Google authentication
+- Supabase email-confirmed passkey signup and passkey sign-in
 - Explicit opt-in saving of final exports only
 - Private gallery and custom frame builder
 - Admin-managed frame and image-sticker catalogs
@@ -29,9 +29,9 @@ The complete guest workflow works without Supabase. Account, gallery, private-fr
 
 1. Create a Supabase project.
 2. Run `supabase/migrations/001_initial.sql` and `supabase/migrations/002_catalog_admin.sql` in order through the SQL editor or Supabase CLI.
-3. Enable Email OTP and Google under Authentication → Providers.
+3. Enable Email OTP and Passkeys under Authentication.
 4. Add `http://localhost:3000/auth/callback` and your Vercel callback URL to the authentication redirect allow-list.
-5. For Google, add the callback URL shown by Supabase to the Google OAuth client.
+5. Configure the Passkeys relying party ID and origins for your local and production domains.
 6. Copy the project URL and anon key into `.env.local`.
 
 The migration creates private `exports` and `private-frames` buckets, a public `curated-frames` bucket, database tables, indexes, and row-level security policies. Paths are namespaced with the authenticated user ID.

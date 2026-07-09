@@ -7,5 +7,6 @@ export async function GET(request: Request) {
   const next = url.searchParams.get("next") ?? "/gallery";
   const supabase = await createClient();
   if (code && supabase) await supabase.auth.exchangeCodeForSession(code);
-  return NextResponse.redirect(new URL(next.startsWith("/") ? next : "/gallery", url.origin));
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/gallery";
+  return NextResponse.redirect(new URL(safeNext, url.origin));
 }
