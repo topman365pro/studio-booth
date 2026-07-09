@@ -8,7 +8,7 @@ A production-ready, privacy-first browser photobooth built with Next.js, Fabric.
 - 24-hour IndexedDB draft recovery; raw captures never leave the browser
 - Routed layout, frame, filter, sticker, animation, and export workflow
 - PNG, JPEG, GIF, and WebM downloads generated in-browser
-- Supabase email-confirmed passkey signup and passkey sign-in
+- Supabase username/password fallback with passkey-first sign-in
 - Explicit opt-in saving of final exports only
 - Private gallery and custom frame builder
 - Admin-managed frame and image-sticker catalogs
@@ -28,11 +28,10 @@ The complete guest workflow works without Supabase. Account, gallery, private-fr
 ## Supabase setup
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/001_initial.sql` and `supabase/migrations/002_catalog_admin.sql` in order through the SQL editor or Supabase CLI.
-3. Enable Email OTP and Passkeys under Authentication.
-4. Add `http://localhost:3000/auth/callback` and your Vercel callback URL to the authentication redirect allow-list.
-5. Configure the Passkeys relying party ID and origins for your local and production domains.
-6. Copy the project URL and anon key into `.env.local`.
+2. Run the SQL files in `supabase/migrations/` in timestamp order through the SQL editor, Supabase CLI, or MCP.
+3. Enable Email/password and Passkeys under Authentication.
+4. Configure the Passkeys relying party ID and origins for your local and production domains.
+5. Copy the project URL, anon key, and server-only secret key into `.env.local`.
 
 The migration creates private `exports` and `private-frames` buckets, a public `curated-frames` bucket, database tables, indexes, and row-level security policies. Paths are namespaced with the authenticated user ID.
 
@@ -59,7 +58,8 @@ Vertical strips can be exported as a portrait A4 PNG at exactly 2480 × 3508 pix
    - `NEXT_PUBLIC_SITE_URL=https://your-domain.example`
    - `NEXT_PUBLIC_SUPABASE_URL=...`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY=...`
-3. Add `https://your-domain.example/auth/callback` to Supabase redirect URLs.
+   - `SUPABASE_SECRET_KEY=...`
+3. Configure Supabase Passkey origins for your production domain.
 4. Deploy. Vercel provides HTTPS, which is required for camera access.
 
 No server-side image or video rendering is required. Camera captures and encoding happen in the browser; Vercel serves the app and Supabase stores only explicit final saves.

@@ -14,8 +14,14 @@ type Passkey = {
   last_used_at?: string;
 };
 
+type Profile = {
+  username?: string | null;
+  display_name?: string | null;
+};
+
 export function AccountClient() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [passkeys, setPasskeys] = useState<Passkey[]>([]);
   const [setupPasskey, setSetupPasskey] = useState(false);
   const [continueTo, setContinueTo] = useState("/gallery");
@@ -25,6 +31,11 @@ export function AccountClient() {
   const loadPasskeys = async () => {
     const { data } = await createClient()?.auth.passkey.list() ?? { data: null };
     setPasskeys(data ?? []);
+  };
+
+  const loadProfile = async (userId: string) => {
+    const { data } = await createClient()?.from("profiles").select("username, display_name").eq("id", userId).single() ?? { data: null };
+    setProfile(data);
   };
 
   useEffect(() => {
@@ -38,7 +49,10 @@ export function AccountClient() {
     const supabase = createClient();
     void supabase?.auth.getUser().then(({ data }) => {
       setUser(data.user);
-      if (data.user) void loadPasskeys();
+      if (data.user) {
+        void loadPasskeys();
+        void loadProfile(data.user.id);
+      }
     });
   }, []);
 
@@ -78,11 +92,11 @@ export function AccountClient() {
       <SiteHeader />
       <main className="account-page">
         <p className="kicker">ACCOUNT</p><h1>Your studio<br />identity.</h1>
-        {user ? <><section><User size={30} /><div><p>Email</p><h2>{user.email}</h2></div><div><p>Member since</p><h2>{new Date(user.created_at).toLocaleDateString()}</h2></div><Link href="/gallery" className="button button-outline">My gallery</Link><button className="button button-solid" onClick={signOut}><LogOut size={14} /> Sign out</button></section>
+        {user ? <><section><User size={30} /><div><p>Username</p><h2>{profile?.username ?? profile?.display_name ?? "Studio member"}</h2></div><div><p>Member since</p><h2>{new Date(user.created_at).toLocaleDateString()}</h2></div><Link href="/gallery" className="button button-outline">My gallery</Link><button className="button button-solid" onClick={signOut}><LogOut size={14} /> Sign out</button></section>
           <section className="account-passkeys">
-            <div className="passkey-heading"><Fingerprint size={30} /><div><p>Passkeys</p><h2>Sign in without Google or a password</h2></div></div>
+            <div className="passkey-heading"><Fingerprint size={30} /><div><p>Passkeys</p><h2>Passkey-first sign-in</h2></div></div>
             <div className="passkey-list">
-              {setupPasskey && <div className="passkey-setup-card"><strong>Finish your passkey signup</strong><small>Your email is confirmed. Create a passkey on this device to complete account setup.</small></div>}
+              {setupPasskey && <div className="passkey-setup-card"><strong>Finish your passkey signup</strong><small>Your account is ready. Create a passkey on this device to complete setup.</small></div>}
               {passkeys.map(passkey => <div className="passkey-row" key={passkey.id}><div><strong>{passkey.friendly_name ?? "Passkey"}</strong><small>Added {new Date(passkey.created_at).toLocaleDateString()}</small></div><button aria-label="Remove passkey" onClick={() => deletePasskey(passkey.id)} disabled={busy}><Trash2 size={14} /></button></div>)}
               {!passkeys.length && <p>No passkeys registered yet.</p>}
             </div>
