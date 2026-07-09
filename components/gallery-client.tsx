@@ -71,7 +71,7 @@ export function GalleryClient() {
         ) : loading ? (
           <div className="gallery-loading"><LoaderCircle className="spin" /> Loading private gallery…</div>
         ) : !signedIn ? (
-          <Empty icon={<LogIn />} title="Sign in to see your work" copy="Magic links and Google sign-in keep this simple."><Link className="button button-solid" href="/login?next=/gallery">Sign in</Link></Empty>
+          <Empty icon={<LogIn />} title="Sign in to see your work" copy="Passkeys keep sign-in quick, private, and password-free."><Link className="button button-solid" href="/login?next=/gallery">Sign in</Link></Empty>
         ) : !sessions.length ? (
           <Empty icon={<ImageIcon />} title="Nothing saved yet" copy="Finish a booth session, then choose Save to my gallery."><Link className="button button-acid" href="/studio/capture">Open camera</Link></Empty>
         ) : (

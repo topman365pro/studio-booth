@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { LoaderCircle } from "lucide-react";
+import { Fingerprint, LoaderCircle } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export function LoginForm() {
@@ -23,25 +23,30 @@ export function LoginForm() {
     setBusy(false);
   };
 
-  const google = async () => {
+  const passkey = async () => {
     const supabase = createClient();
     if (!supabase) return setMessage("Supabase is not configured yet. Add the variables from .env.example.");
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` }
-    });
+    setBusy(true);
+    setMessage("");
+    const { error } = await supabase.auth.signInWithPasskey();
+    if (error) {
+      setMessage(error.message);
+      setBusy(false);
+      return;
+    }
+    window.location.assign(next);
   };
 
   return (
     <div className="login-form">
-      <button className="google-button" onClick={google} disabled={!isSupabaseConfigured}><b>G</b> Continue with Google</button>
-      <div className="form-divider"><span>or</span></div>
+      <button className="passkey-button" onClick={passkey} disabled={busy || !isSupabaseConfigured}><Fingerprint size={18} /> Sign in with a passkey</button>
+      <div className="form-divider"><span>first time?</span></div>
       <form onSubmit={magicLink}>
         <label>Email address<input required type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.com" /></label>
         <button className="button button-solid" disabled={busy || !email}>{busy ? <LoaderCircle className="spin" /> : "Send magic link"}</button>
       </form>
       <p className="auth-message">{message}</p>
-      <small>We only use your account to keep exports and private frames available to you.</small>
+      <small>New here? Use a magic link once, then create a passkey from your account page.</small>
     </div>
   );
 }
