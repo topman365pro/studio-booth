@@ -11,14 +11,14 @@ export default function HomePage() {
       <main>
         <section className="lab-hero">
           <div className="lab-hero-copy">
-            <p className="kicker">INDEPENDENT BROWSER PHOTO LAB / EST. 2026</p>
+            <p className="kicker">BROWSER PHOTO LAB</p>
             <h1>Make it.<br /><em>Keep it.</em></h1>
             <p className="lab-hero-deck">A private camera, a hands-on print editor, and a finished strip ready for your screen—or your wall.</p>
             <div className="lab-hero-actions">
               <Link href="/guide" className="button button-lab">Open the booth <ArrowRight size={15} /></Link>
               <Link href="/frames" className="text-link">Browse frames</Link>
             </div>
-            <div className="lab-proof"><span><i />Camera stays local</span><span>PNG · GIF · WEBM · A4</span></div>
+            <div className="lab-proof"><span><i />Built by Topman</span><span>PNG · GIF · WEBM · A4</span></div>
           </div>
           <div className="lab-hero-visual" aria-label="A sample contact sheet">
             <div className="contact-sheet">
