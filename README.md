@@ -49,7 +49,7 @@ The protected `/admin` interface then provides frame and sticker uploads, publis
 
 ### A4 print sheets
 
-Vertical strips can be exported as a portrait A4 PNG at exactly 2480 × 3508 pixels. One to four copies are rotated 90 degrees, scaled to the 2480-pixel paper edge, and stacked from the top with no margins or gaps. The browser print action uses an A4 portrait, zero-margin print stylesheet.
+Vertical strips can be exported as a portrait A4 PNG at exactly 2480 × 3508 pixels. One copy is selected by default, rotated 90 degrees, and placed near the top. The export panel offers a proof-style margin option and a no-margin full-width option; up to four copies can still be requested when you want duplicates on one page. The browser print action uses an A4 portrait, zero-margin print stylesheet so the exported PNG controls the visible margins.
 
 ## Vercel deployment
 

@@ -95,6 +95,8 @@ export interface StickerAsset {
 
 export type ProfileRole = "member" | "admin";
 
+export type A4MarginMode = "with-margin" | "no-margin";
+
 export interface PrintSheetResult {
   canvas: HTMLCanvasElement;
   copies: number;

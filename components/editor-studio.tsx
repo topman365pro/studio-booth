@@ -12,7 +12,7 @@ import { fallbackTextStickers } from "@/lib/stickers";
 import { assetExtension, validateImageAsset } from "@/lib/assets";
 import { canvasBlob, composeA4Sheet, createGif, createWebM, downloadBlob, printA4Canvas, renderDraftToCanvas } from "@/lib/render";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
-import type { EditorStage, FilterSettings, LayoutId, StickerItem } from "@/lib/types";
+import type { A4MarginMode, EditorStage, FilterSettings, LayoutId, StickerItem } from "@/lib/types";
 
 const order: EditorStage[] = ["layout", "filter", "stickers", "animate", "export"];
 const presets: { id: FilterSettings["preset"]; label: string }[] = [
@@ -30,7 +30,8 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [animationSpeed, setAnimationSpeed] = useState(450);
-  const [printCopies, setPrintCopies] = useState(4);
+  const [printCopies, setPrintCopies] = useState(1);
+  const [printMarginMode, setPrintMarginMode] = useState<A4MarginMode>("with-margin");
   const stageIndex = order.indexOf(stage);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
     if (!exportCanvas.current) throw new Error("Export canvas unavailable");
     const frame = printableFrameForLayout(frameById(draft.frameId), "strip");
     const fabricCanvas = await renderDraftToCanvas(exportCanvas.current, draft, frame);
-    const sheet = composeA4Sheet(exportCanvas.current, printCopies);
+    const sheet = composeA4Sheet(exportCanvas.current, printCopies, printMarginMode);
     fabricCanvas.dispose();
     return sheet;
   };
@@ -113,7 +114,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
     try {
       const sheet = await createA4();
       const blob = await canvasBlob(sheet.canvas, "image/png");
-      downloadBlob(blob, `studio-booth-a4-${sheet.copies}x-${Date.now()}.png`);
+      downloadBlob(blob, `studio-booth-a4-${printMarginMode}-${sheet.copies}x-${Date.now()}.png`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "A4 export failed");
     } finally {
@@ -370,7 +371,11 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
               </div>
             </ControlSection>
             {draft.layoutId === "strip" && <ControlSection title="A4 print sheet">
-              <p className="panel-copy">Portrait A4 · 300 DPI · strips rotated 90° and stacked flush from the top edge.</p>
+              <p className="panel-copy">Portrait A4 · 300 DPI · one rotated strip by default. Pick margins for a proof-style sheet, or no margin for full-width placement.</p>
+              <div className="print-style-picker">
+                <button className={printMarginMode === "with-margin" ? "active" : ""} onClick={() => setPrintMarginMode("with-margin")}>With margin<small>Reference style</small></button>
+                <button className={printMarginMode === "no-margin" ? "active" : ""} onClick={() => setPrintMarginMode("no-margin")}>No margin<small>Full width</small></button>
+              </div>
               <div className="print-copy-picker">
                 {[1, 2, 3, 4].map(copies => <button key={copies} className={printCopies === copies ? "active" : ""} onClick={() => setPrintCopies(copies)}>{copies}<small>{copies === 1 ? "copy" : "copies"}</small></button>)}
               </div>

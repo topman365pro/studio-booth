@@ -1,6 +1,6 @@
 "use client";
 
-import type { BoothDraft, FrameTemplate, PrintSheetResult } from "@/lib/types";
+import type { A4MarginMode, BoothDraft, FrameTemplate, PrintSheetResult } from "@/lib/types";
 import { filterCss } from "@/lib/draft";
 
 function loadImage(src: string) {
@@ -163,17 +163,27 @@ export function downloadBlob(blob: Blob, filename: string) {
 
 export const A4_WIDTH_PX = 2480;
 export const A4_HEIGHT_PX = 3508;
+export const A4_MARGIN_X_PX = 120;
+export const A4_MARGIN_TOP_PX = 120;
+export const A4_MARGIN_BOTTOM_PX = 120;
+export const A4_COPY_GAP_PX = 40;
 
-export function calculateA4Geometry(stripWidth: number, stripHeight: number) {
+export function calculateA4Geometry(stripWidth: number, stripHeight: number, marginMode: A4MarginMode = "with-margin") {
   if (stripWidth <= 0 || stripHeight <= 0) throw new Error("Strip dimensions must be positive.");
-  const scale = A4_WIDTH_PX / stripHeight;
+  const marginX = marginMode === "with-margin" ? A4_MARGIN_X_PX : 0;
+  const marginTop = marginMode === "with-margin" ? A4_MARGIN_TOP_PX : 0;
+  const marginBottom = marginMode === "with-margin" ? A4_MARGIN_BOTTOM_PX : 0;
+  const gap = marginMode === "with-margin" ? A4_COPY_GAP_PX : 0;
+  const copyWidth = A4_WIDTH_PX - marginX * 2;
+  const scale = copyWidth / stripHeight;
   const copyHeight = Math.round(stripWidth * scale);
-  const maxCopies = Math.max(0, Math.min(4, Math.floor(A4_HEIGHT_PX / copyHeight)));
-  return { scale, copyHeight, maxCopies };
+  const availableHeight = A4_HEIGHT_PX - marginTop - marginBottom;
+  const maxCopies = Math.max(0, Math.min(4, Math.floor((availableHeight + gap) / (copyHeight + gap))));
+  return { scale, copyWidth, copyHeight, maxCopies, marginX, marginTop, gap, marginMode };
 }
 
-export function composeA4Sheet(stripCanvas: HTMLCanvasElement, requestedCopies: number): PrintSheetResult {
-  const { scale, copyHeight, maxCopies } = calculateA4Geometry(stripCanvas.width, stripCanvas.height);
+export function composeA4Sheet(stripCanvas: HTMLCanvasElement, requestedCopies: number, marginMode: A4MarginMode = "with-margin"): PrintSheetResult {
+  const { scale, copyWidth, copyHeight, maxCopies, marginX, marginTop, gap } = calculateA4Geometry(stripCanvas.width, stripCanvas.height, marginMode);
   const copies = Math.max(1, Math.min(Math.floor(requestedCopies), maxCopies));
   if (maxCopies < 1) throw new Error("This strip is too wide to fit on an A4 print sheet.");
   const canvas = document.createElement("canvas");
@@ -185,13 +195,13 @@ export function composeA4Sheet(stripCanvas: HTMLCanvasElement, requestedCopies: 
 
   for (let index = 0; index < copies; index += 1) {
     context.save();
-    context.translate(A4_WIDTH_PX, index * copyHeight);
+    context.translate(marginX + copyWidth, marginTop + index * (copyHeight + gap));
     context.rotate(Math.PI / 2);
     context.scale(scale, scale);
     context.drawImage(stripCanvas, 0, 0);
     context.restore();
   }
-  const usedHeight = copies * copyHeight;
+  const usedHeight = copies * copyHeight + Math.max(0, copies - 1) * gap;
   return {
     canvas,
     copies,
