@@ -8,6 +8,7 @@ import { Logo } from "@/components/logo";
 const nav = [
   { href: "/#about", label: "About" },
   { href: "/frames", label: "Frames" },
+  { href: "/stickers", label: "Stickers" },
   { href: "/guide", label: "How it works" },
   { href: "/gallery", label: "My gallery" }
 ];

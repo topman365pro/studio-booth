@@ -7,6 +7,8 @@ export function Footer() {
       <Logo />
       <p>Made for good faces and questionable poses.</p>
       <nav>
+        <Link href="/frames">Frames</Link>
+        <Link href="/stickers">Stickers</Link>
         <Link href="/faq">FAQ</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>

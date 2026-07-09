@@ -10,7 +10,7 @@ A production-ready, privacy-first browser photobooth built with Next.js, Fabric.
 - PNG, JPEG, GIF, and WebM downloads generated in-browser
 - Supabase username/password fallback with passkey-first sign-in
 - Explicit opt-in saving of final exports only
-- Private gallery and custom frame builder
+- Private gallery, custom frame builder, and private sticker library
 - Admin-managed frame and image-sticker catalogs
 - Print-ready edge-aligned A4 strip sheets at 300 DPI
 - Responsive modern photo-lab interface

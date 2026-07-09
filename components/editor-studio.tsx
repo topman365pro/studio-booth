@@ -321,6 +321,7 @@ export function EditorStudio({ stage }: { stage: EditorStage }) {
                 <span><b>Upload private sticker</b><small>PNG or WebP · maximum 10 MB</small></span>
                 <input type="file" accept="image/png,image/webp" onChange={event => void uploadPrivateSticker(event.target.files?.[0])} />
               </label>
+              <Link className="panel-link" href="/stickers">Browse the full library <ArrowRight size={14} /></Link>
               <div className="sticker-grid">
                 {imageStickers.map(asset => <button key={asset.id} onClick={() => addImageSticker(asset)}><img src={asset.src} alt="" /><span>{asset.title}</span></button>)}
                 {fallbackTextStickers.map(({ glyph, category }) => <button key={`${glyph}-${category}`} onClick={() => addSticker(glyph)}><b>{glyph}</b><span>{category}</span></button>)}
