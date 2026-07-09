@@ -5,6 +5,11 @@ import { useSearchParams } from "next/navigation";
 import { Fingerprint, LoaderCircle } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
+const canonicalOrigin = () => {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  return configured || window.location.origin;
+};
+
 export function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/gallery";
@@ -19,7 +24,7 @@ export function LoginForm() {
     setBusy(true);
     setMessage("");
     const setupPath = `/account?setupPasskey=1&next=${encodeURIComponent(next)}`;
-    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(setupPath)}`;
+    const redirectTo = `${canonicalOrigin()}/auth/callback?next=${encodeURIComponent(setupPath)}`;
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
