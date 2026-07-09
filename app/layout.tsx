@@ -17,6 +17,15 @@ export const metadata: Metadata = {
     title: brand.name,
     description: brand.description,
     type: "website"
+  },
+  icons: {
+    icon: [
+      { url: "/brand/studio-booth-icon.svg", type: "image/svg+xml" },
+      { url: "/brand/studio-booth-icon-32.png", sizes: "32x32", type: "image/png" }
+    ],
+    apple: [
+      { url: "/brand/studio-booth-apple-icon.png", sizes: "180x180", type: "image/png" }
+    ]
   }
 };
 
