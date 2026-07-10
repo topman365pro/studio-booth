@@ -68,6 +68,8 @@ export async function renderDraftToCanvas(
     photo.set({
       left: slot.x,
       top: slot.y,
+      originX: "left",
+      originY: "top",
       angle: slot.rotation ?? 0,
       selectable: false,
       evented: false
@@ -80,6 +82,8 @@ export async function renderDraftToCanvas(
     overlay.set({
       left: 0,
       top: 0,
+      originX: "left",
+      originY: "top",
       scaleX: frame.width / Math.max(1, overlay.width),
       scaleY: frame.height / Math.max(1, overlay.height),
       selectable: false,
@@ -91,6 +95,8 @@ export async function renderDraftToCanvas(
   if (draft.filter.vignette > 0) {
     const vignette = new fabric.Rect({
       left: 0, top: 0, width: frame.width, height: frame.height,
+      originX: "left",
+      originY: "top",
       fill: "transparent",
       stroke: `rgba(0,0,0,${draft.filter.vignette / 100})`,
       strokeWidth: Math.min(frame.width, frame.height) * 0.15,
@@ -134,6 +140,8 @@ export async function renderDraftToCanvas(
   const brandText = new fabric.FabricText("STUDIO BOOTH", {
     left: 54,
     top: frame.height - 100,
+    originX: "left",
+    originY: "top",
     fontSize: Math.max(24, frame.width * 0.035),
     fontWeight: "bold",
     fill: frame.foreground,
