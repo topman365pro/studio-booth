@@ -1,7 +1,7 @@
 # Studio Booth
 
-A production-ready, privacy-first browser photobooth built with Next.js, Fabric.js, Supabase, and browser-native media APIs.
 ![Screenshot](https://github.com/topman365pro/studio-booth/blob/main/public/brand/boothss.png?raw=true)
+A production-ready, privacy-first browser photobooth built with Next.js, Fabric.js, Supabase, and browser-native media APIs.
 
 ## Features
 
