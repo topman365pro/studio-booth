@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Space_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { BoothProvider } from "@/components/booth-provider";
 import { CatalogProvider } from "@/components/catalog-provider";
 import { brand } from "@/lib/brand";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="grain" aria-hidden="true" />
         <CatalogProvider><BoothProvider>{children}</BoothProvider></CatalogProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
