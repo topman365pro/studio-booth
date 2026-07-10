@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useBooth } from "@/components/booth-provider";
 import { printableFrameForLayout } from "@/lib/frames";
 import { filterCss } from "@/lib/draft";
 import { useCatalog } from "@/components/catalog-provider";
+import { imageHasTransparency } from "@/lib/assets";
 
 export function CompositionPreview({ animate = false }: { animate?: boolean }) {
   const { draft } = useBooth();
@@ -12,6 +13,18 @@ export function CompositionPreview({ animate = false }: { animate?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const baseFrame = frameById(draft.frameId);
   const frame = useMemo(() => printableFrameForLayout(baseFrame, draft.layoutId), [baseFrame, draft.layoutId]);
+  const [overlayHasTransparency, setOverlayHasTransparency] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    setOverlayHasTransparency(true);
+    if (frame.overlayUrl) {
+      void imageHasTransparency(frame.overlayUrl)
+        .then(hasTransparency => { if (active) setOverlayHasTransparency(hasTransparency); })
+        .catch(() => { /* Keep the safe foreground behavior when pixels cannot be inspected. */ });
+    }
+    return () => { active = false; };
+  }, [frame.overlayUrl]);
 
   useEffect(() => {
     if (!animate || !containerRef.current) return;
@@ -52,7 +65,12 @@ export function CompositionPreview({ animate = false }: { animate?: boolean }) {
           >{!capture && <span>NO PHOTO</span>}</div>
         );
       })}
-      {frame.overlayUrl && <img className="composition-overlay" src={frame.overlayUrl} alt="" aria-hidden="true" />}
+      {frame.overlayUrl && <img
+        className={`composition-overlay ${overlayHasTransparency ? "above-photos" : "below-photos"}`}
+        src={frame.overlayUrl}
+        alt=""
+        aria-hidden="true"
+      />}
       {draft.filter.vignette > 0 && <div className="vignette" style={{ opacity: draft.filter.vignette / 100 }} />}
       {[...draft.stickers].sort((a, b) => (a.layer ?? 0) - (b.layer ?? 0)).map(sticker => (
         sticker.kind === "image" ? <img

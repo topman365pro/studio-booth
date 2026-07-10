@@ -5,10 +5,13 @@ import type { BoothDraft, FrameTemplate } from "@/lib/types";
 
 const fabricMock = vi.hoisted(() => {
   const imageSetCalls: Record<string, unknown>[] = [];
+  const addedObjects: unknown[] = [];
 
   class MockImageObject {
     width = 688;
     height = 500;
+
+    constructor(public source = "") {}
 
     set(options: Record<string, unknown>) {
       imageSetCalls.push(options);
@@ -23,7 +26,7 @@ const fabricMock = vi.hoisted(() => {
       target.height = options.height;
     }
 
-    add() {}
+    add(object: unknown) { addedObjects.push(object); }
     renderAll() {}
     dispose() {}
   }
@@ -36,13 +39,18 @@ const fabricMock = vi.hoisted(() => {
 
   return {
     imageSetCalls,
-    fromURL: vi.fn(async () => new MockImageObject()),
+    addedObjects,
+    fromURL: vi.fn(async (source: string) => new MockImageObject(source)),
     StaticCanvas: MockStaticCanvas,
     Canvas: MockStaticCanvas,
     Rect: MockObject,
     FabricText: MockObject
   };
 });
+
+const transparencyMock = vi.hoisted(() => vi.fn(async () => true));
+
+vi.mock("@/lib/assets", () => ({ imageHasTransparency: transparencyMock }));
 
 vi.mock("fabric", () => ({
   StaticCanvas: fabricMock.StaticCanvas,
@@ -98,7 +106,10 @@ describe("renderDraftToCanvas", () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     fabricMock.imageSetCalls.length = 0;
+    fabricMock.addedObjects.length = 0;
     fabricMock.fromURL.mockClear();
+    transparencyMock.mockReset();
+    transparencyMock.mockResolvedValue(true);
   });
 
   it("anchors photo slot images by their top-left corner", async () => {
@@ -128,5 +139,27 @@ describe("renderDraftToCanvas", () => {
       originX: "left",
       originY: "top"
     });
+  });
+
+  it("puts an opaque custom frame below the photo slots", async () => {
+    transparencyMock.mockResolvedValue(false);
+    await renderDraftToCanvas(
+      document.createElement("canvas"),
+      { ...draft, captures: [] },
+      { ...frame, overlayUrl: "https://example.com/opaque-frame.png" }
+    );
+
+    expect(fabricMock.addedObjects[0]).toMatchObject({ source: "https://example.com/opaque-frame.png" });
+  });
+
+  it("puts a transparent custom frame above the photo slots", async () => {
+    transparencyMock.mockResolvedValue(true);
+    await renderDraftToCanvas(
+      document.createElement("canvas"),
+      { ...draft, captures: [] },
+      { ...frame, overlayUrl: "https://example.com/transparent-frame.png" }
+    );
+
+    expect(fabricMock.addedObjects[frame.slots.length]).toMatchObject({ source: "https://example.com/transparent-frame.png" });
   });
 });

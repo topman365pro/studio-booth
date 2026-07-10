@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/client";
 
 const nav = [
-  { href: "/#about", label: "About" },
   { href: "/frames", label: "Frames" },
   { href: "/stickers", label: "Stickers" },
-  { href: "/guide", label: "How it works" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/gallery", label: "My gallery" }
 ];
 
@@ -77,14 +76,16 @@ export function SiteHeader() {
         <button className="icon-btn" onClick={() => setLight(!light)} aria-label="Toggle theme">
           {light ? <Moon size={16} /> : <Sun size={16} />}
         </button>
-        <Link href={signedIn ? "/account" : "/login"} className="button button-outline header-login">{accountLabel}</Link>
-        <button className="menu-trigger" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Menu">
+        <Link href={signedIn ? "/account" : "/login"} className="header-account">{accountLabel}</Link>
+        <Link href="/guide" className="button header-start">Open booth <ArrowRight size={14} /></Link>
+        <button className="menu-trigger" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? "Close menu" : "Menu"}>
           {open ? <X /> : <Menu />}
         </button>
       </div>
       <nav className={`mobile-nav ${open ? "open" : ""}`} aria-label="Mobile navigation">
         {nav.map((item) => <Link key={item.href} onClick={() => setOpen(false)} href={item.href}>{item.label}</Link>)}
         <Link onClick={() => setOpen(false)} href={signedIn ? "/account" : "/login"}>{accountLabel}</Link>
+        <Link onClick={() => setOpen(false)} href="/guide">Open booth <ArrowRight size={15} /></Link>
       </nav>
     </header>
   );

@@ -2,6 +2,7 @@
 
 import type { A4MarginMode, BoothDraft, FrameTemplate, PrintSheetResult } from "@/lib/types";
 import { filterCss } from "@/lib/draft";
+import { imageHasTransparency } from "@/lib/assets";
 
 function loadImage(src: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -52,6 +53,26 @@ export async function renderDraftToCanvas(
     selection: Boolean(options.interactive)
   });
 
+  let overlay: Awaited<ReturnType<typeof fabric.FabricImage.fromURL>> | null = null;
+  let overlayHasTransparency = true;
+  if (frame.overlayUrl) {
+    [overlay, overlayHasTransparency] = await Promise.all([
+      fabric.FabricImage.fromURL(frame.overlayUrl, { crossOrigin: "anonymous" }),
+      imageHasTransparency(frame.overlayUrl).catch(() => true)
+    ]);
+    overlay.set({
+      left: 0,
+      top: 0,
+      originX: "left",
+      originY: "top",
+      scaleX: frame.width / Math.max(1, overlay.width),
+      scaleY: frame.height / Math.max(1, overlay.height),
+      selectable: false,
+      evented: false
+    });
+    if (!overlayHasTransparency) canvas.add(overlay);
+  }
+
   for (let index = 0; index < frame.slots.length; index += 1) {
     const slot = frame.slots[index];
     const source = draft.captures[index % Math.max(1, draft.captures.length)];
@@ -77,20 +98,7 @@ export async function renderDraftToCanvas(
     canvas.add(photo);
   }
 
-  if (frame.overlayUrl) {
-    const overlay = await fabric.FabricImage.fromURL(frame.overlayUrl, { crossOrigin: "anonymous" });
-    overlay.set({
-      left: 0,
-      top: 0,
-      originX: "left",
-      originY: "top",
-      scaleX: frame.width / Math.max(1, overlay.width),
-      scaleY: frame.height / Math.max(1, overlay.height),
-      selectable: false,
-      evented: false
-    });
-    canvas.add(overlay);
-  }
+  if (overlay && overlayHasTransparency) canvas.add(overlay);
 
   if (draft.filter.vignette > 0) {
     const vignette = new fabric.Rect({

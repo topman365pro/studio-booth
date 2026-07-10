@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="2400" viewBox="0 0 800 2400">
+  <title>Studio Booth strip frame overlay — 800 × 2400 px</title>
+  <desc>Four transparent photo cutouts, each 688 × 500 px.</desc>
+  <path
+    fill="#ede1c7"
+    fill-rule="evenodd"
+    d="M0 0H800V2400H0Z
+       M56 56H744V556H56Z
+       M56 582H744V1082H56Z
+       M56 1108H744V1608H56Z
+       M56 1634H744V2134H56Z"
+  />
+</svg>

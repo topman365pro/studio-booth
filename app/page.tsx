@@ -1,98 +1,150 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Camera, Download, Layers3, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  Camera,
+  Download,
+  ShieldCheck,
+  Sparkles,
+  WandSparkles
+} from "lucide-react";
 import { Footer } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { curatedFrames } from "@/lib/frames";
+
+const steps = [
+  {
+    number: "01",
+    icon: Camera,
+    title: "Step into the booth",
+    copy: "Use the camera you already have. Set the timer, find your light, and take four shots without installing a thing."
+  },
+  {
+    number: "02",
+    icon: WandSparkles,
+    title: "Make it feel like you",
+    copy: "Choose a frame, tune the color, add stickers, and arrange every detail in a hands-on editor."
+  },
+  {
+    number: "03",
+    icon: Download,
+    title: "Keep the good part",
+    copy: "Save a crisp photo strip, an animated GIF, or a print-ready A4 sheet—straight to your device."
+  }
+];
 
 export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <main>
-        <section className="lab-hero">
-          <div className="lab-hero-copy">
-            <p className="kicker">BROWSER PHOTO LAB</p>
-            <h1>Make it.<br /><em>Keep it.</em></h1>
-            <p className="lab-hero-deck">A private camera, a hands-on print editor, and a finished strip ready for your screen—or your wall.</p>
-            <div className="lab-hero-actions">
-              <Link href="/guide" className="button button-lab">Open the booth <ArrowRight size={15} /></Link>
-              <Link href="/frames" className="text-link">Browse frames</Link>
+      <main className="landing">
+        <section className="landing-hero">
+          <div className="landing-hero-copy">
+            <p className="landing-eyebrow"><span /> Your private photobooth, right in the browser</p>
+            <h1>Make the moment.<br /><em>Keep the feeling.</em></h1>
+            <p className="landing-intro">
+              Take the photos, design the strip, and save something worth keeping. No app, no account, no awkward upload.
+            </p>
+            <div className="landing-actions">
+              <Link href="/guide" className="landing-button landing-button-primary">
+                Open the booth <ArrowRight aria-hidden="true" size={17} />
+              </Link>
+              <Link href="/frames" className="landing-button landing-button-quiet">Explore frames</Link>
             </div>
-            <div className="lab-proof"><span><i />Built by Topman</span><span>PNG · GIF · WEBM · A4</span></div>
-          </div>
-          <div className="lab-hero-visual" aria-label="A sample contact sheet">
-            <div className="contact-sheet">
-              <div className="contact-image contact-a"><span>01</span></div>
-              <div className="contact-image contact-b"><span>02</span></div>
-              <div className="contact-image contact-c"><span>03</span></div>
-              <div className="contact-note">ROLL 01<br />GOOD LIGHT<br />JUL · 2026</div>
+            <div className="landing-trust" aria-label="Product benefits">
+              <span><ShieldCheck aria-hidden="true" size={15} /> Photos stay on your device</span>
+              <span>Free to use</span>
             </div>
-            <p>CONTACT SHEET / UNCORRECTED</p>
           </div>
-          <div className="lab-hero-foot"><span>NO APP REQUIRED</span><span>RAW FRAMES NEVER UPLOADED</span><span>SCROLL / 01—04</span></div>
+
+          <div className="landing-hero-art" aria-label="A finished Studio Booth photo strip in the editor">
+            <div className="landing-art-caption caption-top">Four frames / one good memory</div>
+            <div className="landing-photo-strip">
+              <div className="landing-photo landing-photo-one"><span>01</span></div>
+              <div className="landing-photo landing-photo-two"><span>02</span></div>
+              <div className="landing-photo landing-photo-three"><span>03</span></div>
+              <div className="landing-photo landing-photo-four"><span>04</span></div>
+              <div className="landing-strip-wordmark">STUDIO BOOTH <i>♥</i></div>
+            </div>
+            <div className="landing-sticker sticker-smile">GOOD<br />ONE!</div>
+            <div className="landing-sticker sticker-date">10 · 07 · 26</div>
+            <div className="landing-tool-card">
+              <span>MOOD</span>
+              <div><i className="swatch-coral" /><i className="swatch-cream" /><i className="swatch-blue" /><i className="swatch-acid" /></div>
+            </div>
+            <div className="landing-art-caption caption-bottom">Made in your browser / kept by you</div>
+          </div>
+
+          <a className="landing-scroll" href="#how-it-works" aria-label="Scroll to see how it works">
+            <ArrowDown aria-hidden="true" size={15} /> Scroll to develop
+          </a>
         </section>
 
-        <div className="ticker" aria-hidden="true">
-          <div>LIVE CAMERA — FOUR SHOTS — FRAMES — FILTERS — STICKERS — GIF — WEBM — INSTANT DOWNLOAD — LIVE CAMERA — FOUR SHOTS — FRAMES — FILTERS — STICKERS — GIF — WEBM — INSTANT DOWNLOAD —</div>
-        </div>
+        <section className="landing-marquee" aria-label="Studio Booth capabilities">
+          <p>LIVE CAMERA <i>✦</i> FOUR SHOTS <i>✦</i> CUSTOM FRAMES <i>✦</i> STICKERS <i>✦</i> GIF + WEBM <i>✦</i> PRINT READY <i>✦</i> PRIVATE BY DEFAULT</p>
+        </section>
 
-        <section className="home-about" id="about">
-          <p className="section-number">01</p>
-          <div>
-            <p className="kicker">THE BOOTH IN YOUR TAB</p>
-            <h2>Good photos.<br />Zero equipment.</h2>
-            <p className="large-copy">Open the camera, find your light, and leave with a finished photo strip. Your raw shots never leave this browser.</p>
+        <section className="landing-manifesto" id="about">
+          <div className="landing-section-label"><span>01</span><p>Why Studio Booth</p></div>
+          <div className="landing-manifesto-copy">
+            <p className="landing-eyebrow">The charm of a booth, without the queue</p>
+            <h2>Not just a photo.<br />A little <em>artifact.</em></h2>
           </div>
-          <div className="feature-lines">
-            {[
-              [Camera, "Live camera", "Pick a camera, mirror it, add a ring light, and set your own countdown."],
-              [Layers3, "Real editor", "Choose a layout, tune the image, and place stickers directly on the result."],
-              [Download, "Take it with you", "Export a high-resolution still, animated GIF, or smooth WebM."]
-            ].map(([Icon, title, copy], index) => {
-              const FeatureIcon = Icon as typeof Camera;
-              return <article key={title as string}><FeatureIcon size={20} /><span>0{index + 1}</span><h3>{title as string}</h3><p>{copy as string}</p></article>;
-            })}
+          <div className="landing-manifesto-note">
+            <p>Studio Booth turns a quick camera moment into something composed, personal, and ready to share or print.</p>
+            <p className="landing-micro">Your raw camera frames are processed locally and never uploaded by the booth.</p>
           </div>
         </section>
 
-        <section className="workflow-section">
-          <div className="workflow-copy">
-            <p className="kicker">ONE FLOW / MANY MOODS</p>
-            <h2>Your face,<br /><em>your frame.</em></h2>
-            <p>Capture once. Change the composition, color, character, and movement until it feels like yours.</p>
-            <Link href="/guide" className="text-link">Open the camera <ArrowUpRight size={16} /></Link>
+        <section className="landing-process" id="how-it-works">
+          <div className="landing-section-head">
+            <div className="landing-section-label"><span>02</span><p>From camera to keepsake</p></div>
+            <h2>Three steps.<br /><em>Endless versions.</em></h2>
+            <p>Simple enough to start immediately, flexible enough to make the final result distinctly yours.</p>
           </div>
-          <div className="demo-strip">
-            <div className="demo-photo demo-one"><span>01</span></div>
-            <div className="demo-photo demo-two"><span>02</span></div>
-            <div className="demo-photo demo-three"><span>03</span></div>
-            <b>STUDIO BOOTH / KEEP THE MOMENT</b>
+          <div className="landing-step-list">
+            {steps.map(({ number, icon: Icon, title, copy }) => (
+              <article className="landing-step" key={number}>
+                <span className="landing-step-number">{number}</span>
+                <Icon aria-hidden="true" size={22} />
+                <div><h3>{title}</h3><p>{copy}</p></div>
+                <ArrowRight aria-hidden="true" className="landing-step-arrow" size={20} />
+              </article>
+            ))}
           </div>
         </section>
 
-        <section className="frame-preview-section">
-          <div className="section-heading">
-            <p className="kicker">FRAME LIBRARY / 03</p>
-            <h2>Pick a mood.</h2>
-            <p>Minimal, loud, nostalgic, or strange. Start with a curated frame—or make your own.</p>
+        <section className="landing-frames">
+          <div className="landing-frames-head">
+            <div className="landing-section-label"><span>03</span><p>Start with a mood</p></div>
+            <div>
+              <h2>A frame for<br />every version of you.</h2>
+              <Link href="/frames" className="landing-inline-link">See the full collection <ArrowRight aria-hidden="true" size={16} /></Link>
+            </div>
           </div>
-          <div className="frame-rail">
+          <div className="landing-frame-grid">
             {curatedFrames.slice(0, 4).map((frame, index) => (
-              <Link key={frame.id} href={`/frames?selected=${frame.id}`} className="frame-card">
-                <div className={`frame-poster poster-${index}`} style={{ background: frame.background, color: frame.foreground }}>
-                  <span>{frame.title}</span><Sparkles size={24} />
+              <Link key={frame.id} href={`/frames?selected=${frame.id}`} className="landing-frame-card">
+                <div className="landing-frame-art" style={{ backgroundColor: frame.background, color: frame.foreground }}>
+                  <span className="landing-frame-index">0{index + 1}</span>
+                  <div className="landing-frame-slots"><i /><i /><i /></div>
+                  <Sparkles aria-hidden="true" size={20} />
+                  <b>{frame.title}</b>
                 </div>
-                <p>0{index + 1} / {frame.category.toUpperCase()}</p>
+                <div><p>{frame.title}</p><span>{frame.category}</span></div>
               </Link>
             ))}
           </div>
-          <Link href="/frames" className="button button-outline all-frames">View all frames</Link>
         </section>
 
-        <section className="final-cta">
-          <p className="kicker">LIGHTS ON?</p>
-          <h2>Say cheese.</h2>
-          <Link href="/guide" className="shutter-link small"><b>Start</b><span>It&apos;s free</span></Link>
+        <section className="landing-final">
+          <div className="landing-final-orbit" aria-hidden="true" />
+          <p className="landing-eyebrow">Camera ready?</p>
+          <h2>Your next favorite<br />photo starts <em>here.</em></h2>
+          <Link href="/guide" className="landing-button landing-button-primary">
+            Start your photo strip <ArrowRight aria-hidden="true" size={17} />
+          </Link>
+          <p className="landing-final-note">No download · No account required · Free to use</p>
         </section>
       </main>
       <Footer />

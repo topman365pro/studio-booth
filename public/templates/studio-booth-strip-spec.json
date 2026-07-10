@@ -1,0 +1,19 @@
+{
+  "name": "Studio Booth default strip",
+  "canvas": {
+    "width": 800,
+    "height": 2400,
+    "units": "px"
+  },
+  "photoSlots": [
+    { "name": "PHOTO_1", "x": 56, "y": 56, "width": 688, "height": 500 },
+    { "name": "PHOTO_2", "x": 56, "y": 582, "width": 688, "height": 500 },
+    { "name": "PHOTO_3", "x": 56, "y": 1108, "width": 688, "height": 500 },
+    { "name": "PHOTO_4", "x": 56, "y": 1634, "width": 688, "height": 500 }
+  ],
+  "notes": [
+    "Keep the cutout areas transparent in the final overlay.",
+    "Export the finished overlay at exactly 800 × 2400 px.",
+    "Use PNG or WebP with transparency for upload to Studio Booth."
+  ]
+}

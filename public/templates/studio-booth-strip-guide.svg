@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="2400" viewBox="0 0 800 2400">
+  <title>Studio Booth editable strip guide — 800 × 2400 px</title>
+  <desc>Exact guide for the default four-photo strip layout.</desc>
+
+  <g id="FRAME_ARTWORK">
+    <rect width="800" height="2400" fill="#ede1c7"/>
+  </g>
+
+  <g id="PHOTO_CUTOUTS" fill="#ffffff">
+    <rect id="PHOTO_1" x="56" y="56" width="688" height="500"/>
+    <rect id="PHOTO_2" x="56" y="582" width="688" height="500"/>
+    <rect id="PHOTO_3" x="56" y="1108" width="688" height="500"/>
+    <rect id="PHOTO_4" x="56" y="1634" width="688" height="500"/>
+  </g>
+
+  <g id="GUIDES" fill="none" stroke="#ff2f76" stroke-width="4" stroke-dasharray="16 12">
+    <rect x="56" y="56" width="688" height="500"/>
+    <rect x="56" y="582" width="688" height="500"/>
+    <rect x="56" y="1108" width="688" height="500"/>
+    <rect x="56" y="1634" width="688" height="500"/>
+  </g>
+
+  <g id="LABELS" fill="#151515" font-family="Arial, sans-serif" text-anchor="middle">
+    <g font-size="40" font-weight="700">
+      <text x="400" y="280">PHOTO 1</text>
+      <text x="400" y="806">PHOTO 2</text>
+      <text x="400" y="1332">PHOTO 3</text>
+      <text x="400" y="1858">PHOTO 4</text>
+    </g>
+    <g font-size="22">
+      <text x="400" y="320">X 56 · Y 56 · W 688 · H 500</text>
+      <text x="400" y="846">X 56 · Y 582 · W 688 · H 500</text>
+      <text x="400" y="1372">X 56 · Y 1108 · W 688 · H 500</text>
+      <text x="400" y="1898">X 56 · Y 1634 · W 688 · H 500</text>
+    </g>
+    <text x="400" y="2260" font-size="30" font-weight="700">FRAME ARTWORK / TITLE AREA</text>
+    <text x="400" y="2300" font-size="22">CANVAS 800 × 2400 PX</text>
+  </g>
+</svg>
